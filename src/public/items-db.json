@@ -1,0 +1,80 @@
+[
+  {
+    "id": 1,
+    "name": "Iron Sword",
+    "type": "weapon",
+    "class": "Warrior",
+    "rarity": "common",
+    "str": 2,
+    "agi": 0,
+    "vit": 0,
+    "int": 0,
+    "luk": 0,
+    "description": "A basic iron sword for beginners."
+  },
+  {
+    "id": 2,
+    "name": "Leather Armor",
+    "type": "armor",
+    "class": "Guardian",
+    "rarity": "common",
+    "str": 0,
+    "agi": 1,
+    "vit": 2,
+    "int": 0,
+    "luk": 0,
+    "description": "Simple armor offering minimal protection."
+  },
+  {
+    "id": 3,
+    "name": "Swift Boots",
+    "type": "boots",
+    "class": "Thief",
+    "rarity": "uncommon",
+    "str": 0,
+    "agi": 3,
+    "vit": 0,
+    "int": 0,
+    "luk": 1,
+    "description": "Boots that increase agility and luck."
+  },
+  {
+    "id": 4,
+    "name": "Mystic Gloves",
+    "type": "gloves",
+    "class": "Mage",
+    "rarity": "rare",
+    "str": 0,
+    "agi": 0,
+    "vit": 0,
+    "int": 4,
+    "luk": 0,
+    "description": "Gloves infused with magical energy."
+  },
+  {
+    "id": 5,
+    "name": "Priest's Amulet",
+    "type": "accessory",
+    "class": "Priest",
+    "rarity": "epic",
+    "str": 0,
+    "agi": 0,
+    "vit": 2,
+    "int": 3,
+    "luk": 2,
+    "description": "An amulet that boosts vitality, intelligence, and luck."
+  },
+  {
+    "id": 6,
+    "name": "Ranger's Bow",
+    "type": "weapon",
+    "class": "Ranger",
+    "rarity": "rare",
+    "str": 1,
+    "agi": 4,
+    "vit": 0,
+    "int": 0,
+    "luk": 1,
+    "description": "A bow favored by skilled rangers."
+  }
+]

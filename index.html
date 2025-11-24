@@ -4,421 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RPG Character Sheet</title>
-    <style>
-        :root {
-            --btn-size: 60px;
-            --btn-gap: 20px;
-        }
-
-        body {
-            font-family: 'Courier New', Courier, monospace;
-            background-color: #f5e9d0;
-            margin: 0;
-            padding: 20px 20px 120px; /* Bottom padding for floating buttons */
-            max-width: 1200px;
-            margin: 0 auto;
-            color: #333;
-            position: relative;
-        }
-        
-        .character-sheet {
-            background-color: #fff7e6;
-            border: 2px solid #333;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            position: relative;
-        }
-
-        .status-bar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            background: rgba(51, 51, 51, 0.9);
-            color: white;
-            padding: 8px 20px;
-            font-size: 0.9em;
-            text-align: center;
-            z-index: 1000;
-            transition: opacity 0.3s;
-            opacity: 0;
-        }
-
-        .status-bar.show {
-            opacity: 1;
-        }
-        
-        h1 {
-            text-align: center;
-            font-size: 2.5em;
-            margin-bottom: 20px;
-            letter-spacing: 2px;
-        }
-        
-        .header-row {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-        
-        .section {
-            border: 1px solid #333;
-            padding: 15px;
-            margin-bottom: 20px;
-            border-radius: 5px;
-        }
-        
-        .section-title {
-            font-weight: bold;
-            font-size: 1.2em;
-            margin-bottom: 10px;
-            text-align: center;
-            border-bottom: 1px solid #333;
-            padding-bottom: 5px;
-        }
-        
-        .form-row {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
-            margin-bottom: 15px;
-        }
-        
-        .form-group {
-            display: flex;
-            align-items: center;
-            margin-right: 20px;
-            min-width: 200px;
-        }
-        
-        label {
-            font-weight: bold;
-            margin-right: 10px;
-            min-width: 80px;
-        }
-        
-        input, textarea {
-            width: 100%;
-            padding: 5px;
-            border: 1px solid #333;
-            font-family: inherit;
-            box-sizing: border-box;
-        }
-        
-        textarea {
-            height: 80px;
-        }
-        
-        .quick-rolls, .ativas, .passivas {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 15px;
-        }
-        
-        .roll-item, .star-item {
-            display: flex;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-        
-        .star-item .star {
-            font-weight: bold;
-            margin-right: 10px;
-            font-size: 1.2em;
-        }
-        
-        .conditions {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
-        }
-        
-        .condition-item {
-            display: flex;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-        
-        .turns {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            width: 100%;
-        }
-        
-        .turn-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background: #f8f0e0;
-            padding: 6px 10px;
-            border-radius: 4px;
-            border: 1px solid #d4c0a0;
-        }
-        
-        .turn-icon {
-            font-size: 1.2em;
-            margin-right: 8px;
-            min-width: 24px;
-            text-align: center;
-        }
-        
-        .turn-label {
-            font-weight: bold;
-            flex: 1;
-        }
-
-        .turn-control {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            min-width: 100px;
-        }
-
-        input[type="range"] {
-            -webkit-appearance: none;
-            height: 6px;
-            border-radius: 3px;
-            background: #d9c8a9;
-            outline: none;
-            flex: 1;
-        }
-
-        input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            width: 16px;
-            height: 16px;
-            border-radius: 50%;
-            background: #8b4513;
-            cursor: pointer;
-            border: 1px solid #5a2e0f;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.2);
-        }
-
-        input[type="range"]::-moz-range-thumb {
-            width: 16px;
-            height: 16px;
-            border-radius: 50%;
-            background: #8b4513;
-            cursor: pointer;
-            border: 1px solid #5a2e0f;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.2);
-        }
-
-        .turn-value {
-            min-width: 40px;
-            text-align: center;
-            font-weight: bold;
-            background: #e8d8b8;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-size: 0.9em;
-        }
-
-        .inventory-list {
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-        }
-        
-        .inventory-item {
-            display: flex;
-            align-items: center;
-            margin-bottom: 5px;
-        }
-        
-        .inventory-item input {
-            flex-grow: 1;
-            margin-right: 10px;
-        }
-        
-        .actions {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin-top: 20px;
-            padding: 15px;
-            border-top: 1px solid #333;
-        }
-        
-        button {
-            padding: 10px 20px;
-            background-color: #8b4513;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: background-color 0.3s;
-        }
-        
-        button:hover {
-            background-color: #6b3a0c;
-        }
-
-        button:active {
-            transform: translateY(1px);
-        }
-
-        .equipment-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 15px;
-        }
-
-        .unsaved-indicator {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: #e74c3c;
-            color: white;
-            font-size: 0.8em;
-            padding: 2px 8px;
-            border-radius: 10px;
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0% { opacity: 1; }
-            50% { opacity: 0.5; }
-            100% { opacity: 1; }
-        }
-
-        /* 🎲 Floating Dice Buttons */
-        .dice-float {
-            position: fixed;
-            bottom: var(--btn-gap);
-            width: var(--btn-size);
-            height: var(--btn-size);
-            border-radius: 50%;
-            border: 3px solid #333;
-            background: linear-gradient(135deg, #c19a6b, #8b5e3c);
-            color: white;
-            font-weight: bold;
-            font-size: 1.4em;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-            cursor: pointer;
-            z-index: 2000;
-            transition: all 0.2s;
-        }
-
-        .dice-float.d6 {
-            left: var(--btn-gap);
-        }
-
-        .dice-float.d20 {
-            right: var(--btn-gap);
-        }
-
-        .dice-float:hover {
-            transform: scale(1.1) rotate(5deg);
-            box-shadow: 0 6px 12px rgba(0,0,0,0.4);
-        }
-
-        .dice-float:active {
-            transform: scale(0.95);
-        }
-
-        /* 🎯 Result Popup */
-        .dice-result {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) scale(0.8);
-            background: #2c3e50;
-            color: white;
-            padding: 30px 50px;
-            border-radius: 12px;
-            font-size: 3.5em;
-            font-weight: bold;
-            text-align: center;
-            z-index: 3000;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            opacity: 0;
-            pointer-events: none;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-
-        .dice-result.show {
-            transform: translate(-50%, -50%) scale(1);
-            opacity: 1;
-            pointer-events: auto;
-        }
-
-        .dice-result .label {
-            font-size: 1em;
-            opacity: 0.8;
-            margin-top: 10px;
-        }
-
-        /* 📜 Roll History Panel */
-        .roll-history {
-            position: fixed;
-            bottom: calc(var(--btn-size) + var(--btn-gap) + 10px);
-            right: var(--btn-gap);
-            width: 280px;
-            max-height: 200px;
-            background: rgba(255, 250, 240, 0.95);
-            border: 2px solid #333;
-            border-radius: 8px;
-            padding: 12px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-            z-index: 1500;
-            display: none;
-            overflow-y: auto;
-        }
-
-        .roll-history.visible {
-            display: block;
-        }
-
-        .roll-history h4 {
-            margin: 0 0 10px 0;
-            font-size: 1.1em;
-            border-bottom: 1px solid #333;
-            padding-bottom: 4px;
-        }
-
-        .roll-item {
-            font-size: 0.9em;
-            margin-bottom: 6px;
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .roll-value {
-            font-weight: bold;
-            min-width: 30px;
-            text-align: center;
-        }
-
-        .roll-d6 { color: #2980b9; }
-        .roll-d20 { color: #e67e22; }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            body {
-                padding: 20px 15px 130px;
-            }
-
-            .dice-float {
-                width: 55px;
-                height: 55px;
-                font-size: 1.2em;
-            }
-
-            .dice-result {
-                padding: 20px 30px;
-                font-size: 2.8em;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="src/public/style.css">
 </head>
 <body>
     <div class="status-bar" id="statusBar"></div>
@@ -427,7 +13,6 @@
         <div id="unsavedIndicator" class="unsaved-indicator" style="display: none;">•••</div>
         <h1>CHARACTER SHEET</h1>
         
-        <!-- (Rest of your form content remains identical — omitted for brevity) -->
         <div class="header-row">
             <div class="form-group">
                 <label>NAME</label>
@@ -435,7 +20,14 @@
             </div>
             <div class="form-group">
                 <label>CLASS</label>
-                <input type="text" id="class" placeholder="Class">
+                <select id="class">
+                    <option value="Warrior">Warrior</option>
+                    <option value="Guardian">Guardian</option>
+                    <option value="Thief">Thief</option>
+                    <option value="Mage">Mage</option>
+                    <option value="Priest">Priest</option>
+                    <option value="Ranger">Ranger</option>
+                </select>
             </div>
             <div class="form-group">
                 <label>PLAYER</label>
@@ -443,46 +35,56 @@
             </div>
             <div class="form-group">
                 <label>LEVEL</label>
-                <input type="number" id="level" placeholder="Level">
+                <input type="number" id="level" placeholder="Level" style="width:40%;">
+                <input type="number" id="level2" placeholder="..." style="width:40%;">
             </div>
             <div class="form-group">
                 <label>EXP</label>
-                <input type="number" id="exp" placeholder="Experience">
+                <input type="number" id="exp" placeholder="Experience" style="width:40%;">
+                <input type="number" id="exp2" placeholder="..." style="width:40%;">
             </div>
             <div class="form-group">
                 <label>HP</label>
-                <input type="number" id="hp" placeholder="Hit Points">
+                <input type="number" id="hp" placeholder="Hit Points" style="width:40%;">
+                <input type="number" id="hp2" placeholder="..." style="width:40%;">
             </div>
             <div class="form-group">
                 <label>FATIGUE</label>
-                <input type="number" id="fatigue" placeholder="Fatigue">
+                <input type="number" id="fatigue" placeholder="Fatigue" style="width:40%;">
+                <input type="number" id="fatigue2" placeholder="..." style="width:40%;">
             </div>
             <div class="form-group">
                 <label>MAX</label>
-                <input type="number" id="max" placeholder="Max Fatigue">
+                <input type="number" id="max" placeholder="Max Fatigue" style="width:40%;">
+                <input type="number" id="max2" placeholder="..." style="width:40%;">
             </div>
         </div>
         
         <div class="form-row">
             <div class="form-group">
                 <label>STR</label>
-                <input type="number" id="str" placeholder="Strength">
+                <input type="number" id="str" placeholder="Strength" style="width:40%;">
+                <input type="number" id="str2" placeholder="..." style="width:40%;">
             </div>
             <div class="form-group">
                 <label>AGI</label>
-                <input type="number" id="agi" placeholder="Agility">
+                <input type="number" id="agi" placeholder="Agility" style="width:40%;">
+                <input type="number" id="agi2" placeholder="..." style="width:40%;">
             </div>
             <div class="form-group">
                 <label>VIT</label>
-                <input type="number" id="vit" placeholder="Vitality">
+                <input type="number" id="vit" placeholder="Vitality" style="width:40%;">
+                <input type="number" id="vit2" placeholder="..." style="width:40%;">
             </div>
             <div class="form-group">
                 <label>INT</label>
-                <input type="number" id="int" placeholder="Intelligence">
+                <input type="number" id="int" placeholder="Intelligence" style="width:40%;">
+                <input type="number" id="int2" placeholder="..." style="width:40%;">
             </div>
             <div class="form-group">
                 <label>LUK</label>
-                <input type="number" id="luk" placeholder="Luck">
+                <input type="number" id="luk" placeholder="Luck" style="width:40%;">
+                <input type="number" id="luk2" placeholder="..." style="width:40%;">
             </div>
         </div>
         
@@ -517,27 +119,27 @@
         </div>
         
         <div class="section">
-            <div class="section-title">ATIVAS</div>
-            <div class="ativas">
+            <div class="section-title">ACTIVES</div>
+            <div class="actives">
                 <div class="star-item">
                     <span class="star">★</span>
-                    <input type="text" id="ativa1" placeholder="Active Ability 1">
+                    <input type="text" id="active1" placeholder="Active Ability 1">
                 </div>
                 <div class="star-item">
                     <span class="star">★</span>
-                    <input type="text" id="ativa2" placeholder="Active Ability 2">
+                    <input type="text" id="active2" placeholder="Active Ability 2">
                 </div>
                 <div class="star-item">
                     <span class="star">★</span>
-                    <input type="text" id="ativa3" placeholder="Active Ability 3">
+                    <input type="text" id="active3" placeholder="Active Ability 3">
                 </div>
                 <div class="star-item">
                     <span class="star">★</span>
-                    <input type="text" id="ativa4" placeholder="Active Ability 4">
+                    <input type="text" id="active4" placeholder="Active Ability 4">
                 </div>
                 <div class="star-item">
                     <span class="star">★</span>
-                    <input type="text" id="ativa5" placeholder="Active Ability 5">
+                    <input type="text" id="active5" placeholder="Active Ability 5">
                 </div>
             </div>
         </div>
@@ -569,27 +171,27 @@
         </div>
         
         <div class="section">
-            <div class="section-title">PASSIVAS</div>
-            <div class="passivas">
+            <div class="section-title">PASSIVES</div>
+            <div class="passives">
                 <div class="star-item">
                     <span class="star">★</span>
-                    <input type="text" id="passiva1" placeholder="Passive Ability 1">
+                    <input type="text" id="passive1" placeholder="Passive Ability 1">
                 </div>
                 <div class="star-item">
                     <span class="star">★</span>
-                    <input type="text" id="passiva2" placeholder="Passive Ability 2">
+                    <input type="text" id="passive2" placeholder="Passive Ability 2">
                 </div>
                 <div class="star-item">
                     <span class="star">★</span>
-                    <input type="text" id="passiva3" placeholder="Passive Ability 3">
+                    <input type="text" id="passive3" placeholder="Passive Ability 3">
                 </div>
                 <div class="star-item">
                     <span class="star">★</span>
-                    <input type="text" id="passiva4" placeholder="Passive Ability 4">
+                    <input type="text" id="passive4" placeholder="Passive Ability 4">
                 </div>
                 <div class="star-item">
                     <span class="star">★</span>
-                    <input type="text" id="passiva5" placeholder="Passive Ability 5">
+                    <input type="text" id="passive5" placeholder="Passive Ability 5">
                 </div>
             </div>
         </div>
@@ -725,8 +327,11 @@
     </div>
 
     <!-- 🎲 Floating Dice Buttons -->
-    <button class="dice-float d6" id="rollD6">d6</button>
-    <button class="dice-float d20" id="rollD20">d20</button>
+    <div class="dice-float-group">
+        <button class="dice-float d6" id="rollD6">d6</button>
+        <button class="dice-float d20" id="rollD20">d20</button>
+        <button class="dice-float history" id="showHistoryBtn">📜</button>
+    </div>
 
     <!-- 📜 Roll History Panel -->
     <div class="roll-history" id="rollHistory">
@@ -740,403 +345,8 @@
         <div class="label" id="resultLabel">d6</div>
     </div>
 
-    <script>
-        // Utility: show status bar message
-        function showStatus(message, type = 'info') {
-            const bar = document.getElementById('statusBar');
-            bar.textContent = message;
-            bar.className = 'status-bar show';
-            bar.style.backgroundColor = type === 'error' ? '#e74c3c' : 
-                                      type === 'success' ? '#27ae60' : '#3498db';
-            setTimeout(() => bar.classList.remove('show'), 3000);
-        }
-
-        // 🎲 Dice sound (Web Audio API - no external files)
-        function playDiceSound() {
-            try {
-                const ctx = new (window.AudioContext || window.webkitAudioContext)();
-                const now = ctx.currentTime;
-                
-                // Shake sound
-                const shake = ctx.createOscillator();
-                const shakeGain = ctx.createGain();
-                shake.type = 'sawtooth';
-                shake.frequency.setValueAtTime(200, now);
-                shake.frequency.exponentialRampToValueAtTime(600, now + 0.2);
-                shakeGain.gain.setValueAtTime(0.1, now);
-                shakeGain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
-                shake.connect(shakeGain);
-                shakeGain.connect(ctx.destination);
-                shake.start(now);
-                shake.stop(now + 0.5);
-                
-                // Land "clack"
-                setTimeout(() => {
-                    const clack = ctx.createOscillator();
-                    const clackGain = ctx.createGain();
-                    clack.type = 'square';
-                    clack.frequency.value = 800;
-                    clackGain.gain.setValueAtTime(0.3, now);
-                    clackGain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
-                    clack.connect(clackGain);
-                    clackGain.connect(ctx.destination);
-                    clack.start(now);
-                    clack.stop(now + 0.15);
-                }, 520);
-            } catch (e) {
-                console.log('Audio disabled or not supported');
-            }
-        }
-
-        // 🎯 Show result popup
-        function showDiceResult(value, dieType) {
-            const resultEl = document.getElementById('diceResult');
-            const numEl = document.getElementById('resultNumber');
-            const labelEl = document.getElementById('resultLabel');
-            
-            numEl.textContent = value;
-            labelEl.textContent = dieType;
-            numEl.className = dieType === 'd6' ? 'roll-d6' : 'roll-d20';
-            
-            resultEl.classList.remove('show');
-            // Trigger reflow
-            void resultEl.offsetWidth;
-            resultEl.classList.add('show');
-            
-            // Auto-hide after 1.5s
-            setTimeout(() => {
-                resultEl.classList.remove('show');
-            }, 1500);
-        }
-
-        // 📜 Add to roll history
-        function addToHistory(value, dieType) {
-            const historyList = document.getElementById('historyList');
-            const now = new Date();
-            const timeStr = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-            
-            const item = document.createElement('div');
-            item.className = 'roll-item';
-            item.innerHTML = `
-                <span>${timeStr}</span>
-                <span class="roll-value ${dieType === 'd6' ? 'roll-d6' : 'roll-d20'}">${value}</span>
-                <span>${dieType}</span>
-            `;
-            
-            historyList.insertBefore(item, historyList.firstChild);
-            
-            // Keep only last 8 rolls
-            while (historyList.children.length > 8) {
-                historyList.removeChild(historyList.lastChild);
-            }
-        }
-
-        // 🎲 Roll dice
-        function rollDie(sides) {
-            return Math.floor(Math.random() * sides) + 1;
-        }
-
-        // Collect all character data — now includes roll history
-        function collectCharacterData() {
-            const baseData = {
-                name: document.getElementById('name').value,
-                class: document.getElementById('class').value,
-                player: document.getElementById('player').value,
-                level: document.getElementById('level').value,
-                exp: document.getElementById('exp').value,
-                hp: document.getElementById('hp').value,
-                fatigue: document.getElementById('fatigue').value,
-                max: document.getElementById('max').value,
-                str: document.getElementById('str').value,
-                agi: document.getElementById('agi').value,
-                vit: document.getElementById('vit').value,
-                int: document.getElementById('int').value,
-                luk: document.getElementById('luk').value,
-                melee: document.getElementById('melee').value,
-                ranged: document.getElementById('ranged').value,
-                magic: document.getElementById('magic').value,
-                physDef: document.getElementById('physDef').value,
-                magDef: document.getElementById('magDef').value,
-                reaction: document.getElementById('reaction').value,
-                ativas: [
-                    document.getElementById('ativa1').value,
-                    document.getElementById('ativa2').value,
-                    document.getElementById('ativa3').value,
-                    document.getElementById('ativa4').value,
-                    document.getElementById('ativa5').value
-                ],
-                weapon: document.getElementById('weapon').value,
-                armor: document.getElementById('armor').value,
-                gloves: document.getElementById('gloves').value,
-                boots: document.getElementById('boots').value,
-                accessory: document.getElementById('accessory').value,
-                passivas: [
-                    document.getElementById('passiva1').value,
-                    document.getElementById('passiva2').value,
-                    document.getElementById('passiva3').value,
-                    document.getElementById('passiva4').value,
-                    document.getElementById('passiva5').value
-                ],
-                poison: document.getElementById('poison').value,
-                burn: document.getElementById('burn').value,
-                bleed: document.getElementById('bleed').value,
-                arcane: document.getElementById('arcane').value,
-                stun: document.getElementById('stun').value,
-                turns: {
-                    poison: parseInt(document.getElementById('turnPoison').value) || 0,
-                    burn: parseInt(document.getElementById('turnBurn').value) || 0,
-                    slow: parseInt(document.getElementById('turnSlow').value) || 0,
-                    wounded: parseInt(document.getElementById('turnWounded').value) || 0,
-                    stunned: parseInt(document.getElementById('turnStunned').value) || 0
-                },
-                dungeonName: document.getElementById('dungeonName').value,
-                smRooms: document.getElementById('smRooms').value,
-                inventory: Array.from(document.querySelectorAll('.inventory-list input')).map(input => input.value)
-            };
-
-            // Add roll history
-            const historyItems = Array.from(document.querySelectorAll('#historyList .roll-item')).map(item => {
-                const children = item.children;
-                return {
-                    time: children[0].textContent,
-                    value: parseInt(children[1].textContent),
-                    die: children[2].textContent
-                };
-            });
-
-            return {...baseData, rollHistory: historyItems};
-        }
-
-        // Populate form from data — including roll history
-        function populateForm(data) {
-            if (!data) return;
-            
-            // ... (all your existing populate logic — abbreviated here)
-            document.getElementById('name').value = data.name || '';
-            document.getElementById('class').value = data.class || '';
-            // ... (rest of field population)
-            
-            // ✅ Restore turn counters
-            if (data.turns) {
-                document.getElementById('turnPoison').value = data.turns.poison || 0;
-                document.getElementById('turnBurn').value = data.turns.burn || 0;
-                document.getElementById('turnSlow').value = data.turns.slow || 0;
-                document.getElementById('turnWounded').value = data.turns.wounded || 0;
-                document.getElementById('turnStunned').value = data.turns.stunned || 0;
-                ['Poison','Burn','Slow','Wounded','Stunned'].forEach(n => {
-                    document.getElementById(`turn${n}Value`).textContent = document.getElementById(`turn${n}`).value;
-                });
-            }
-
-            // ✅ Restore roll history
-            if (data.rollHistory && Array.isArray(data.rollHistory)) {
-                const historyList = document.getElementById('historyList');
-                historyList.innerHTML = '';
-                data.rollHistory.slice(-8).forEach(item => {
-                    const el = document.createElement('div');
-                    el.className = 'roll-item';
-                    el.innerHTML = `
-                        <span>${item.time}</span>
-                        <span class="roll-value ${item.die === 'd6' ? 'roll-d6' : 'roll-d20'}">${item.value}</span>
-                        <span>${item.die}</span>
-                    `;
-                    historyList.appendChild(el);
-                });
-            }
-        }
-
-        // Update turn display
-        function updateTurnDisplay(name) {
-            const el = document.getElementById(`turn${name}Value`);
-            const slider = document.getElementById(`turn${name}`);
-            if (el && slider) el.textContent = slider.value;
-        }
-
-        // Save to cache
-        function saveToCache() {
-            try {
-                const data = collectCharacterData();
-                localStorage.setItem('rpg-character-draft', JSON.stringify(data));
-                localStorage.setItem('rpg-character-draft-timestamp', new Date().toISOString());
-                showStatus('✓ Auto-saved', 'success');
-                updateUnsavedIndicator(false);
-            } catch (e) {
-                showStatus('⚠ Cache save failed', 'error');
-            }
-        }
-
-        function updateUnsavedIndicator(hasUnsaved) {
-            const indicator = document.getElementById('unsavedIndicator');
-            indicator.style.display = hasUnsaved ? 'block' : 'none';
-        }
-
-        let lastExportedData = null;
-        let hasUnsavedChanges = false;
-
-        // Initialize
-        document.addEventListener('DOMContentLoaded', function() {
-            // Load cached draft
-            try {
-                const cached = localStorage.getItem('rpg-character-draft');
-                if (cached) {
-                    const data = JSON.parse(cached);
-                    populateForm(data);
-                    lastExportedData = {...data};
-                    hasUnsavedChanges = false;
-                    updateUnsavedIndicator(false);
-                    showStatus('✓ Loaded cached draft', 'success');
-                }
-            } catch (e) {
-                console.warn('Cache load failed', e);
-            }
-
-            // ✅ Dice button handlers
-            document.getElementById('rollD6').addEventListener('click', function() {
-                playDiceSound();
-                const result = rollDie(6);
-                showDiceResult(result, 'd6');
-                addToHistory(result, 'd6');
-                hasUnsavedChanges = true;
-                updateUnsavedIndicator(true);
-                saveToCache();
-            });
-
-            document.getElementById('rollD20').addEventListener('click', function() {
-                playDiceSound();
-                const result = rollDie(20);
-                showDiceResult(result, 'd20');
-                addToHistory(result, 'd20');
-                hasUnsavedChanges = true;
-                updateUnsavedIndicator(true);
-                saveToCache();
-            });
-
-            // Toggle history panel on d20 long press / double click
-            let clickTimer;
-            document.getElementById('rollD20').addEventListener('click', function() {
-                clearTimeout(clickTimer);
-                clickTimer = setTimeout(() => {
-                    const panel = document.getElementById('rollHistory');
-                    panel.classList.toggle('visible');
-                }, 300);
-            });
-
-            document.getElementById('rollD20').addEventListener('dblclick', function(e) {
-                e.preventDefault();
-                clearTimeout(clickTimer);
-                const panel = document.getElementById('rollHistory');
-                panel.classList.toggle('visible');
-            });
-
-            // Close history on outside click
-            document.addEventListener('click', function(e) {
-                const panel = document.getElementById('rollHistory');
-                const d20Btn = document.getElementById('rollD20');
-                if (panel.classList.contains('visible') && 
-                    !panel.contains(e.target) && 
-                    e.target !== d20Btn) {
-                    panel.classList.remove('visible');
-                }
-            });
-
-            // Attach input handlers (abbreviated — same as before)
-            ['Poison', 'Burn', 'Slow', 'Wounded', 'Stunned'].forEach(name => {
-                const slider = document.getElementById(`turn${name}`);
-                if (slider) {
-                    slider.addEventListener('input', () => {
-                        updateTurnDisplay(name);
-                        hasUnsavedChanges = true;
-                        updateUnsavedIndicator(true);
-                        saveToCache();
-                    });
-                }
-            });
-
-            document.querySelectorAll('input:not([type="range"]), textarea').forEach(input => {
-                input.addEventListener('input', () => {
-                    hasUnsavedChanges = true;
-                    updateUnsavedIndicator(true);
-                    saveToCache();
-                });
-            });
-
-            // Export, import, reset, clear — same as before (omitted for brevity)
-            document.getElementById('exportBtn').addEventListener('click', function() {
-                const data = collectCharacterData();
-                const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = `${data.name || 'character'}_sheet.json`;
-                a.click();
-                URL.revokeObjectURL(url);
-                lastExportedData = {...data};
-                hasUnsavedChanges = false;
-                updateUnsavedIndicator(false);
-                showStatus('✓ Exported!', 'success');
-            });
-
-            document.getElementById('importBtn').addEventListener('click', function() {
-                const input = document.createElement('input');
-                input.type = 'file';
-                input.accept = '.json';
-                input.onchange = e => {
-                    const file = e.target.files[0];
-                    if (!file) return;
-                    const reader = new FileReader();
-                    reader.onload = ev => {
-                        try {
-                            const data = JSON.parse(ev.target.result);
-                            populateForm(data);
-                            lastExportedData = {...data};
-                            hasUnsavedChanges = false;
-                            updateUnsavedIndicator(false);
-                            saveToCache();
-                            showStatus('✓ Imported!', 'success');
-                        } catch (err) {
-                            showStatus('❌ Import failed', 'error');
-                        }
-                    };
-                    reader.readAsText(file);
-                };
-                input.click();
-            });
-
-            document.getElementById('resetBtn').addEventListener('click', function() {
-                if (confirm('Reset all fields?')) {
-                    document.querySelectorAll('input, textarea').forEach(input => {
-                        if (['melee','ranged','magic','physDef','magDef','reaction'].includes(input.id)) return;
-                        if (input.type === 'range') {
-                            input.value = 0;
-                            updateTurnDisplay(input.id.replace('turn', ''));
-                        } else {
-                            input.value = '';
-                        }
-                    });
-                    document.getElementById('historyList').innerHTML = '';
-                    hasUnsavedChanges = true;
-                    updateUnsavedIndicator(true);
-                    saveToCache();
-                }
-            });
-
-            document.getElementById('clearCacheBtn').addEventListener('click', function() {
-                if (confirm('Clear cached draft?')) {
-                    localStorage.removeItem('rpg-character-draft');
-                    localStorage.removeItem('rpg-character-draft-timestamp');
-                    showStatus('✓ Cache cleared', 'success');
-                }
-            });
-
-            window.addEventListener('beforeunload', e => {
-                if (hasUnsavedChanges) {
-                    e.preventDefault();
-                    e.returnValue = '';
-                    return '';
-                }
-            });
-        });
-    </script>
+    <div id="itemsContainer" style="margin:40px 0 0 0;"></div>
+    <script src="src/public/main.js"></script>
 </body>
 </html>
 
